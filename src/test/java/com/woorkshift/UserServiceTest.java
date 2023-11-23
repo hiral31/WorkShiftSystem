@@ -23,60 +23,51 @@ import com.workshift.services.UserServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-	
+
 	@Mock
-    private UserRepository userRepository;
-	
+	private UserRepository userRepository;
+
 	@InjectMocks
-    private UserServiceImpl userService;
-	
+	private UserServiceImpl userService;
 
-	
-	
 	@Test
-    void testCreateUser() {
-        // Arrange
-        String userName = "John Doe";
-       
-        User mockUser = new User();
-        mockUser.setUserId(1);
-        mockUser.setName(userName);
+	void testCreateUser() {
 
-        // Mocking the behavior of userRepository
-        when(userRepository.findByName(userName)).thenReturn(Optional.empty());
-        
-        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+		String userName = "John Doe";
 
-        // Act
-        User createdUser = userService.createUser(userName);
+		User mockUser = new User();
+		mockUser.setUserId(1);
+		mockUser.setName(userName);
 
-        // Assert
-        assertNotNull(createdUser);
-        assertEquals(1, createdUser.getUserId()); // Assuming ID assignment during saving
-        assertEquals(userName, createdUser.getName());
+		when(userRepository.findByName(userName)).thenReturn(Optional.empty());
 
-        // Verify that userRepository methods were called
-        verify(userRepository, times(1)).findByName(userName);
-        verify(userRepository, times(1)).save(any(User.class));
-    }
-	
+		when(userRepository.save(any(User.class))).thenReturn(mockUser);
+
+		User createdUser = userService.createUser(userName);
+
+		assertNotNull(createdUser);
+		assertEquals(1, createdUser.getUserId()); // Assuming ID assignment during saving
+		assertEquals(userName, createdUser.getName());
+
+		verify(userRepository, times(1)).findByName(userName);
+		verify(userRepository, times(1)).save(any(User.class));
+	}
+
 	@Test
-    void testCreateUserWithExistingName() {
-        // Arrange
-        String existingUserName = "John Doe";
-        User existingUser = new User();
-        existingUser.setUserId(1);
-        existingUser.setName(existingUserName);
+	void testCreateUserWithExistingName() {
 
-        // Mocking the behavior of userRepository to return an existing user
-        when(userRepository.findByName(existingUserName)).thenReturn(Optional.of(existingUser));
+		String existingUserName = "John Doe";
+		User existingUser = new User();
+		existingUser.setUserId(1);
+		existingUser.setName(existingUserName);
 
-        // Act and Assert
-        assertThrows(RuntimeException.class, () -> userService.createUser(existingUserName));
+		// Mocking the behavior of userRepository to return an existing user
+		when(userRepository.findByName(existingUserName)).thenReturn(Optional.of(existingUser));
 
-        // Verify that userRepository methods were called
-        verify(userRepository, times(1)).findByName(existingUserName);
-        verify(userRepository, never()).save(any(User.class));
-    }
+		assertThrows(RuntimeException.class, () -> userService.createUser(existingUserName));
+
+		verify(userRepository, times(1)).findByName(existingUserName);
+		verify(userRepository, never()).save(any(User.class));
+	}
 
 }

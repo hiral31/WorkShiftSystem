@@ -105,9 +105,6 @@ public class Shop {
 		
 	}
 
-
-	
-
 	/**
 	 * @param shopId
 	 * @param name

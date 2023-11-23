@@ -28,7 +28,6 @@ public class ShopServiceImpl implements ShopService {
 		}
 
 		// Check if the shop already exists
-
 		Optional<Shop> existingShop = shopRepository.findByName(name);
 
 		if (existingShop.isPresent()) {
